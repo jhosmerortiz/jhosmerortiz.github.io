@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Recognition</title>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <header id="cabeza">
+        <h1 id="titulo">PREDECIR EMOCIONES</h1>
+    </header>
+    
+    <main >
+        <section id="fondoGeneral">
+            <div class="container">
+                <div class="text-center">
+                    <br><br><video id="videoPreview" autoplay class="rounded"></video>
+                </div>
+
+                <br><br><div id="result"></div><br><br>
+            </div>
+        </section>
+    </main>
+      
+    <footer>
+        <p>&copy; 2024 <span>Derechos de Autor:</span> Renato Chucchucan & Jhosmer Ortiz</p>
+    </footer>
+
+    <script>
+        async function predictEmotion(imageElement) {
+            console.log("MODEL CARGANDO");
+            try {
+                const model = await tf.loadLayersModel('model.json');
+                console.log("MODEL CARGADO");
+
+                // Preprocesar la imagen
+                let tensor = tf.browser.fromPixels(imageElement)
+                    .resizeNearestNeighbor([48, 48]) // Cambiar al tamaño de entrada de la CNN
+                    .mean(2) // Convertir a escala de grises
+                    .expandDims(2) // Añadir una dimensión para crear un tensor de forma [48, 48, 1]
+                    .toFloat()
+                    .expandDims();
+
+                // Realizar la predicción
+                const predictions = model.predict(tensor);
+                const predictionValues = await predictions.data();
+
+                // Mostrar los resultados
+                const class_names = ['ENOJADO', 'DISGUSTADO', 'MIEDO', 'FÉLIZ', 'NEUTRAL', 'TRISTE', 'SORPRENDIDO'];
+                const maxIndex = predictionValues.indexOf(Math.max(...predictionValues));
+                const predictedClass = class_names[maxIndex];
+                const confidence = (Math.max(...predictionValues) * 100).toFixed(2);
+                document.getElementById('result').innerText = `EMOCIÓN: ${predictedClass} ----> (${confidence}% CONFIANZA)`;
+            } catch (error) {
+                console.error("Error al cargar el modelo:", error);
+            }
+        }
+
+        async function takeSnapshot() {
+            const videoElement = document.getElementById('videoPreview');
+            const imageElement = document.createElement('canvas');
+            imageElement.width = videoElement.videoWidth;
+            imageElement.height = videoElement.videoHeight;
+            const context = imageElement.getContext('2d');
+            context.drawImage(videoElement, 0, 0, imageElement.width, imageElement.height);
+            predictEmotion(imageElement);
+        }
+
+        async function setupCamera() {
+            const videoElement = document.getElementById('videoPreview');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+            } catch (err) {
+                console.error('Error al acceder a la cámara:', err);
+            }
+        }
+
+        setupCamera();
+        setInterval(takeSnapshot, 1000); // Llamar a la función takeSnapshot cada segundo
+    </script>
+</body>
+</html>
+

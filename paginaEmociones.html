@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -21,7 +21,7 @@
         <section id="fondoGeneral">
             <div class="container">
                 <div class="text-center">
-                    <br><br><video id="videoPreview" autoplay class="rounded"></video>
+                    <br><br><video id="videoPreview" autoplay class="rounded" style="width: 100%; height: 100%;"></video>
                 </div>
 
                 <br><br><div id="result"></div><br><br>
@@ -76,7 +76,7 @@
         async function setupCamera() {
             const videoElement = document.getElementById('videoPreview');
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: window.innerWidth, height: window.innerHeight } });
                 videoElement.srcObject = stream;
             } catch (err) {
                 console.error('Error al acceder a la cámara:', err);
@@ -88,4 +88,3 @@
     </script>
 </body>
 </html>
-

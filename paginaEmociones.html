@@ -57,7 +57,8 @@
                 const maxIndex = predictionValues.indexOf(Math.max(...predictionValues));
                 const predictedClass = class_names[maxIndex];
                 const confidence = (Math.max(...predictionValues) * 100).toFixed(2);
-              document.getElementById('result').innerText = `EMOCIÓN: ${predictedClass}`;
+                document.getElementById('result').innerText = `EMOCIÓN: ${predictedClass} ----> (${confidence}%`;
+             
             } catch (error) {
                 console.error("Error al cargar el modelo:", error);
             }

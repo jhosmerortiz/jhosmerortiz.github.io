@@ -16,8 +16,8 @@
     <header id="cabeza">
         <h1 id="titulo">PREDECIR EMOCIONES</h1>
     </header>
-    
-    <main >
+
+    <main>
         <section id="fondoGeneral">
             <div class="container">
                 <div class="text-center">
@@ -25,12 +25,12 @@
                 </div>
 
                 <br><br><div id="result"></div><br><br>
+
             </div>
-                 <br><br><br>
+            <br><br><br>
         </section>
-        
     </main>
- 
+
     <footer>
         <p>&copy; 2024 <span>Derechos de Autor:</span> Renato Chucchucan & Jhosmer Ortiz</p>
     </footer>
@@ -60,8 +60,6 @@
                 const predictedClass = class_names[maxIndex];
                 const confidence = (Math.max(...predictionValues) * 100).toFixed(2);
                 document.getElementById('result').innerText = `EMOCIÓN: ${predictedClass} ----> (${confidence}% CONFIANZA)`;
-               
-             
             } catch (error) {
                 console.error("Error al cargar el modelo:", error);
             }
